@@ -34,8 +34,10 @@ async def get_tasks(status : str = None, session: Session = Depends(get_session)
 
 @app.get("/tasks/{task_id}")
 async def get_task(task_id: int, session: Session = Depends(get_session)):
-    return session.get(Task,task_id)
-    raise HTTPException(status_code=404, detail="Task not found")
+    task = session.get(Task,task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
 
 @app.put("/tasks/{task_id}")
 async def update_task(task_id: int,title:str, description:str, state = TaskState.TO_DO, session: Session = Depends(get_session)):
